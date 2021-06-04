@@ -1,6 +1,5 @@
 void
 hide(Client *c) {
-
 	Client *n;
 	if (!c || HIDDEN(c))
 		return;
@@ -59,6 +58,35 @@ togglewin(const Arg *arg)
 		focus(c);
 		restack(c->mon);
 	}
+}
+
+void
+killclientclk(const Arg *arg)
+{
+	Client *c = (Client*)arg->v;
+
+	#if ISPERMANENT_PATCH
+	if (!c || c->ispermanent)
+	#else
+	if (!c)
+	#endif // ISPERMANENT_PATCH
+		return;
+	#if BAR_SYSTRAY_PATCH
+	if (!sendevent(c->win, wmatom[WMDelete], NoEventMask, wmatom[WMDelete], CurrentTime, 0, 0, 0)) {
+	#else
+	if (!sendevent(c, wmatom[WMDelete])) {
+	#endif // BAR_SYSTRAY_PATCH
+		XGrabServer(dpy);
+		XSetErrorHandler(xerrordummy);
+		XSetCloseDownMode(dpy, DestroyAll);
+		XKillClient(dpy, c->win);
+		XSync(dpy, False);
+		XSetErrorHandler(xerror);
+		XUngrabServer(dpy);
+	}
+	#if SWAPFOCUS_PATCH && PERTAG_PATCH
+	selmon->pertag->prevclient[selmon->pertag->curtag] = NULL;
+	#endif // SWAPFOCUS_PATCH
 }
 
 Client *
