@@ -1111,12 +1111,14 @@ static Command commands[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 #endif //
 static const char *termcmd[]  = { "termite", NULL };
+// static const char *jgmenucmd[]  = { "jgmenu", "--simple", "--at-pointer", "--csv-file=\"~/.config/jgmenu/menu.txt\"", NULL };
+static const char *jgmenucmd[]  = { "/bin/sh", "-c", "jgmenu --simple --at-pointer --csv-file=~/.config/jgmenu/menu.txt", NULL };
 
 static Button buttons[] = {
 	/* click                event mask           button          function        argument */
 	#if BAR_STATUSBUTTON_PATCH
-	{ ClkButton,            0,                   Button3,        spawn,          {.v = termcmd } },
-    { ClkButton,            0,                   Button1,        spawn,          {.v = dmenucmd } },
+	{ ClkButton,            0,                   Button3,        spawn,          {.v = dmenucmd } },
+    { ClkButton,            0,                   Button1,        spawn,          {.v = jgmenucmd } },
     #endif // BAR_STATUSBUTTON_PATCH
 	{ ClkLtSymbol,          0,                   Button1,        setlayout,      {0} },
         // { ClkLtSymbol,          0,                   Button3,        layoutmenu,     {0} },
